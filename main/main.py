@@ -12,23 +12,28 @@ def main():
     DIFF_THRESHOLD = 0.9
 
     # test_vid = 'character-ss-to-stage-ss.mp4'
-    test_vid = 'C:/Users/amine/Desktop/ssb-automatic-vod-splitter/main/vods-to-split/character-ss-to-stage-ss.mp4'
+    test_vid = 'C:/Users/amine/Desktop/ssb-automatic-vod-splitter/main/vods-to-split/character-screen-to-stage-screen.mp4'
     cap = cv2.VideoCapture(test_vid)
 
     if cap.isOpened():
-    	print "Device Opened\n"
+    	print "Video Opened\n"
     else:
     	print "Failed to open video\n"
 
-    # 
+    ##### 
 
-    # print cap
-    # ret, frame = cap.read()
-    # print ret 
-    # print frame
-    # print cap.read()
 
-    #
+
+    while(cap.isOpened()):
+    	ret, frame = cap.read()
+    	# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    	cv2.imshow('frame',frame)
+    	if cv2.waitKey(1) & 0xFF == ord('q'):
+    		break
+    		
+    #####
+
+
 
     cap.release()
     cv2.destroyAllWindows()
