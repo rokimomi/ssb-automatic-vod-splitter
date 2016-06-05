@@ -1,29 +1,40 @@
 # ssb-automatic-vod-splitter
 
+## Prerequisite to working with mp4 files in `vods-to-split`
+
+Install Git Large File Storage:
+`https://git-lfs.github.com/`
+
 ## Running
 
 From project root:
 
-1.
-`virtualenv env`
+1. Build virtual environment (only necessary first time you clone)
+  ```
+  virtualenv env
+  ```
 
-2.
-`source env/bin/activate` <- mac/linux
-or...
-`source env/Scripts/activate` <- windows
+2. Activate source (`Scripts` is exclusive to windows virtual environment implementation)
+  ```
+  source env/Scripts/activate
+  ```
 
-3.
-`pip install -r requirements.txt`
+3. Install the python libraries
+  ```
+  pip install -r requirements.txt
+  ```
 
-4.
-install open cv:
-`pip install opencv_python-3.1.0-cp27-cp27m-win32.whl`
+4. Install open cv (the library used to analyze video/images)
+  ```
+  pip install opencv_python-3.1.0-cp27-cp27m-win32.whl
+  ```
 
-5.
-`cd main`
-`python main.py`
-
-
+5. Go to `/main` and run `main.py` 
+  ```
+  cd main
+  python main.py
+  ```
+  
 ## Todo
 
 make short 10 second video in dolphin/obs (character select screen to stage select)
