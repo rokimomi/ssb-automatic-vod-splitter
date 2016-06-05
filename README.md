@@ -2,21 +2,24 @@
 
 ## Running
 
+From project root:
+
 1.
 `virtualenv env`
+
 2.
 `source env/bin/activate` <- mac/linux
 or...
 `source env/Scripts/activate` <- windows
+
 3.
 `pip install -r requirements.txt`
 
 4.
-install open cv
-`https://sourceforge.net/projects/opencvlibrary/files/`
+install open cv:
+`pip install opencv_python-3.1.0-cp27-cp27m-win32.whl`
 
 5.
-
 `cd main`
 `python main.py`
 
