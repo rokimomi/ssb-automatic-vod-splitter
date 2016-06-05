@@ -4,11 +4,12 @@
 
 This project aims to automate the splitting of long tournament captures (8+ hours) of games in the Super Smash Brothers series. The end goal is to provide as much automation and naming assistance in the creation of these smaller sets as possible and to eventually upload them to YouTube
 
-###Usecase 1:
+####Usecase 1:
 
 After a long 8 hour day of streaming a local weekly, the streamer can input their saved vod into this application and not have to spend several more hours just to separate out the videos they were just watching/streaming all day.
 
-###Usecase 2:
+####
+Usecase 2:
 
 A local streamer has been streaming quite a few tournaments and has several saved vods but the matches for those tournaments have not been uploaded to youtube for one reason or another. After quite a few tournaments, the work has piled up and no one wants to dedicate a solid day's work to re-watch the vods and split the tournament sets. They then use this application to automatically split up videos and reduce the backlog of tournament sets that have been left collecting dust on some hard drive.
 
@@ -17,7 +18,8 @@ A local streamer has been streaming quite a few tournaments and has several save
 Install Git Large File Storage:
 `https://git-lfs.github.com/`
 
-## Running
+
+## Getting Started
 
 From project root:
 
@@ -49,11 +51,16 @@ From project root:
   
 ## Todo
 
-make short 10 second video in dolphin/obs (character select screen to stage select)
-capture two full frames from video and attempt to locate when they are in the parent video
-capture partial image specific to a particular time (like something from the character select screen and something from the stage select) and locate their time in the clip
-
-Capture sample video in mp4 format from dolphin that showcases 2 matches. Both matches go to character select screen > game! > back to character select screen.
+* Re-record video and image go/game assets in 1080p quality and size
+* Locate start/stop times of 
+* Save text file of game start/stop times to text file of the same name as the video being analyzed
+* Using the saved timestamps, split the video into separate files
+* Incoperate GUI with 3 core buttons:
+  * **Process VOD** (choose vod, spit out file with timestamps)
+  * **Split VOD** (spits out videos split according to the timestamps file)
+  * **Upload matches to YouTube**
+    * (needed? or no? worth the time/effort of authenticating?)
+* **Future**: Incorperate proof of concept by splitting an 8 hour Xanadu VOD from YouTube
 
 ###the ultimate test...###
-7 hour vgbc vod
+
