@@ -1,4 +1,16 @@
-# ssb-automatic-vod-splitter
+# Super Smash Brothers Automatic Vod Splitter
+
+## Goals & Usecase
+
+This project aims to automate the splitting of long tournament captures (8+ hours) of games in the Super Smash Brothers series. The end goal is to provide as much automation and naming assistance in the creation of these smaller sets as possible and to eventually upload them to YouTube
+
+###Usecase 1:
+
+After a long 8 hour day of streaming a local weekly, the streamer can input their saved vod into this application and not have to spend several more hours just to separate out the videos they were just watching/streaming all day.
+
+###Usecase 2:
+
+A local streamer has been streaming quite a few tournaments and has several saved vods but the matches for those tournaments have not been uploaded to youtube for one reason or another. After quite a few tournaments, the work has piled up and no one wants to dedicate a solid day's work to re-watch the vods and split the tournament sets. They then use this application to automatically split up videos and reduce the backlog of tournament sets that have been left collecting dust on some hard drive.
 
 ## Prerequisite to working with mp4 files in `vods-to-split`
 
