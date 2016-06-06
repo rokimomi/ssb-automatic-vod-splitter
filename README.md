@@ -1,3 +1,5 @@
+[![](https://img.shields.io/badge/python-2.7-yellow.png "Python versions supported")](https://github.com/cztomczak/cefpython#cef-python)
+
 # Super Smash Brothers Automatic Vod Splitter
 
 This project aims to automate the splitting of long tournament captures (8+ hours) of games in the Super Smash Brothers series. The end goal is to provide as much automation and naming assistance in the creation of these smaller sets as possible and to eventually upload them to YouTube
@@ -7,8 +9,6 @@ This project aims to automate the splitting of long tournament captures (8+ hour
 ### Project Dependencies
 
 **Windows** (unsure of how generalized this project can be to other platforms)
-
-**Python 2.7**
 
 **Python Virtual Environment**
 
