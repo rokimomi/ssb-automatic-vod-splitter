@@ -6,6 +6,8 @@ This project aims to automate the splitting of long tournament captures (8+ hour
 
 ### Project Dependencies
 
+**Windows** (unsure of how generalized this project can be to other platforms)
+
 **Python 2.7**
 
 **Python Virtual Environment**
