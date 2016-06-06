@@ -13,10 +13,11 @@ This project aims to automate the splitting of long tournament captures (8+ hour
 **Python Virtual Environment**
 
 **Git Large File Storage**: https://git-lfs.github.com/ 
+* Run: `git lfs pull` to get the video and image assets
 
 ### Installation/running
 
-From project root:
+Clone the repo. Then from project root:
 
 1. Build virtual environment (only necessary first time you clone)
   ```
