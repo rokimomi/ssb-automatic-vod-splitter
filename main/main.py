@@ -16,19 +16,17 @@ _, w, h = GO_TEMPLATE.shape[::-1]
 GO_TEMPLATE_WIDTH = w
 GO_TEMPLATE_HEIGHT = h
 
+GAME_TEMPLATE = cv2.imread('image-assets/game.png', 1)
+_, w, h = GAME_TEMPLATE.shape[::-1]
+GAME_TEMPLATE_WIDTH = w
+GAME_TEMPLATE_HEIGHT = h
+
 def main():
 	"""Main entry point for the script."""
 
 	## INIT
 
 	FPS = 30
-
-	game_template = cv2.imread('image-assets/game.png', 1)
-
-	cv2.imshow('Go', GO_TEMPLATE)
-	cv2.imshow('Game', game_template)
-	cv2.waitKey(1)
-
 
 	## GET CAPTURE
 
@@ -47,37 +45,11 @@ def main():
 	cap, top_left = initializeGameProcessing(cap, 600)
 	cv2.waitKey(1)
 
-	findNextGame(cap, top_left)
+	unprocessed_game = True
 
-	# i = 0
-	# while cap.isOpened():
-
-	# 	ret, frame = cap.read()
-
-	# 	# # check for go!
-	# 	# diff = cv2.matchTemplate(frame, go_template, eval(DIFF_METHOD))
-	# 	# min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(diff)
-
-	# 	# if max_val > DIFF_THRESHOLD:
-	# 	# 	# Found the start of a game
-	# 	# 	cv2.imshow('Go! Frame', frame)
-
-	# 	# # check for game!
-	# 	# diff = cv2.matchTemplate(frame, game_template, eval(DIFF_METHOD))
-	# 	# min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(diff)
-
-	# 	# if max_val > DIFF_THRESHOLD:
-	# 	# 	# Found the end of a game
-	# 	# 	cv2.imshow('Game! Frame', frame)
-
-	# 	cv2.imshow('Press \'q\' to stop video', frame)
-	# 	if not (i % 30):
-	# 		if cv2.waitKey(1) & 0xFF == ord('q'):
-	# 			break
-
-	# 	i += 1
-	# 	print i
-
+	while unprocessed_game:
+		cap = processGame(cap, top_left);
+		unprocessed_game, cap = findNextGame(cap, top_left)
 
 	## CLEANUP
 
@@ -104,9 +76,6 @@ def initializeGameProcessing(cap, approximate_game_start):
 		diff = cv2.matchTemplate(frame, GO_TEMPLATE, eval(DIFF_METHOD))
 		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(diff)
 
-	 	cv2.imshow('Press \'q\' to stop video', frame)
-		cv2.waitKey(1)
-
 		if max_val > DIFF_THRESHOLD:
 			return cap, max_loc
 
@@ -124,14 +93,35 @@ def findNextGame(cap, top_left):
 			top_left[0]: top_left[0] + GO_TEMPLATE_WIDTH
 		];
 
-		# diff = cv2.matchTemplate(frame, GO_TEMPLATE, eval(DIFF_METHOD))
+		diff = cv2.matchTemplate(cropped_frame, GO_TEMPLATE, eval(DIFF_METHOD))
 
-		cv2.imshow('Press \'q\' to stop video', cropped_frame)
+		if diff > DIFF_THRESHOLD:
+			cap = processGame(cap, top_left)
+			return True, cap
+
+	return False, cap
+
+def processGame(cap, top_left):
+	print cap.get(1)
+	while cap.isOpened():
+		ret, frame = cap.read()
+		assert ret
+
+		cropped_frame = frame[
+			top_left[1]: top_left[1] + GO_TEMPLATE_HEIGHT,
+			top_left[0]: top_left[0] + GO_TEMPLATE_WIDTH
+		];
+
+		diff = cv2.matchTemplate(cropped_frame, GAME_TEMPLATE, eval(DIFF_METHOD))
+
+		if diff > DIFF_THRESHOLD:
+			print cap.get(1)
+			return cap
+
+		cv2.imshow('Press \'q\' to stop video', frame)
 		cv2.waitKey(1)
-
-# def processGame(cap timestamp, ):
-# 	while cap.isOpened():
-# 	return cap
+	print "Video ended without game end"
+	assert False
 
 
 if __name__ == '__main__':
