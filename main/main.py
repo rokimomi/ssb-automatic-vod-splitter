@@ -16,8 +16,6 @@ _, w, h = GO_TEMPLATE.shape[::-1]
 GO_TEMPLATE_WIDTH = w
 GO_TEMPLATE_HEIGHT = h
 
-print GO_TEMPLATE_HEIGHT
-
 def main():
 	"""Main entry point for the script."""
 
@@ -121,14 +119,14 @@ def findNextGame(cap, top_left):
 		ret, frame = cap.read()
 		assert ret
 
-		print top_left[0]
-		print top_left[1]
+		cropped_frame = frame[
+			top_left[1]: top_left[1] + GO_TEMPLATE_HEIGHT,
+			top_left[0]: top_left[0] + GO_TEMPLATE_WIDTH
+		];
 
-		cropped_frame = frame[top_left[0]:top_left[1], GO_TEMPLATE_WIDTH:GO_TEMPLATE_HEIGHT]
+		# diff = cv2.matchTemplate(frame, GO_TEMPLATE, eval(DIFF_METHOD))
 
-		diff = cv2.matchTemplate(frame, GO_TEMPLATE, eval(DIFF_METHOD))
-
-	 	cv2.imshow('Press \'q\' to stop video', cropped_frame)
+		cv2.imshow('Press \'q\' to stop video', cropped_frame)
 		cv2.waitKey(1)
 
 # def processGame(cap timestamp, ):
