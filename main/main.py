@@ -6,34 +6,32 @@ import numpy
 import cv2
 
 
-DIFF_METHOD = 'cv2.TM_CCOEFF_NORMED'
-DIFF_THRESHOLD = 0.9
-
-HOW_MANY_FRAMES_THE_STREAMER_IS_WRONG_BY = 60
-
-GO_TEMPLATE = cv2.imread('image-assets/go.png', 1)
-_, w, h = GO_TEMPLATE.shape[::-1]
-GO_TEMPLATE_WIDTH = w
-GO_TEMPLATE_HEIGHT = h
-
-GAME_TEMPLATE = cv2.imread('image-assets/game.png', 1)
-_, w, h = GAME_TEMPLATE.shape[::-1]
-GAME_TEMPLATE_WIDTH = w
-GAME_TEMPLATE_HEIGHT = h
-
 def main():
 	"""Main entry point for the script."""
 
 	## INIT
 
 	FPS = 30
+	DIFF_METHOD = 'cv2.TM_CCOEFF_NORMED'
+	DIFF_THRESHOLD = 0.9
 
-	## GET CAPTURE
+	STREAMER_FIRST_GAME_GUESS = 600
+	HOW_MANY_FRAMES_THE_STREAMER_IS_WRONG_BY = 60
 
-	vod_path = 'vods-to-split/fox-puff-game.mp4'
+	GO_TEMPLATE   = cv2.imread('image-assets/go.png',   1)
+	GAME_TEMPLATE = cv2.imread('image-assets/game.png', 1)
+	_, TEMPLATE_WIDTH, TEMPLATE_HEIGHT = GO_TEMPLATE.shape[::-1]
 
-	cap = cv2.VideoCapture(vod_path)
+	cap = cv2.VideoCapture('vods-to-split/fox-puff-set.mp4')
+	fourcc = cv2.cv.CV_FOURCC(*'XVID')
 
+	## SANITY
+
+	# ensure all templates are the same size
+	_, GAME_TEMPLATE_WIDTH, GAME_TEMPLATE_HEIGHT = GAME_TEMPLATE.shape[::-1]
+	assert GAME_TEMPLATE_WIDTH == TEMPLATE_WIDTH and GAME_TEMPLATE_HEIGHT == TEMPLATE_HEIGHT
+
+	# ensure capture successfully opened
 	if cap.isOpened():
 		print "Video Opened\n"
 	else:
@@ -42,86 +40,63 @@ def main():
 
 	## PROCESS
 
-	cap, top_left = initializeGameProcessing(cap, 600)
-	cv2.waitKey(1)
-
-	unprocessed_game = True
-
-	while unprocessed_game:
-		cap = processGame(cap, top_left);
-		unprocessed_game, cap = findNextGame(cap, top_left)
-
-	## CLEANUP
-
-	input("Press Enter to continue...")
-
-	cap.release()
-	cv2.destroyAllWindows()
-
-	return 1
-
-# this function takes a timestamp and returns an object containing the information required to continue processing the vod
-def initializeGameProcessing(cap, approximate_game_start):
-	game_window = approximate_game_start - HOW_MANY_FRAMES_THE_STREAMER_IS_WRONG_BY
+	game_window = STREAMER_FIRST_GAME_GUESS - HOW_MANY_FRAMES_THE_STREAMER_IS_WRONG_BY
 	if game_window < 0:
 		game_window = 0
 
 	for i in range(1, game_window):
 		cap.read()
 
+	i = 0
+	game_count = 0
+	in_game = False
+	templates = {False:GO_TEMPLATE, True:GAME_TEMPLATE}
 	while cap.isOpened():
 		ret, frame = cap.read()
-		assert ret
+		if not ret:
+			break
 
-		diff = cv2.matchTemplate(frame, GO_TEMPLATE, eval(DIFF_METHOD))
+		if 'top_left' in locals():
+			cropped_frame = frame[
+				top_left[1] : top_left[1] + TEMPLATE_HEIGHT,
+				top_left[0] : top_left[0] + TEMPLATE_WIDTH
+				]
+		else:
+			cropped_frame = frame
+
+		diff = cv2.matchTemplate(cropped_frame, templates[in_game], eval(DIFF_METHOD))
 		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(diff)
 
 		if max_val > DIFF_THRESHOLD:
-			return cap, max_loc
+			if not ('top_left' in locals()):
+				top_left = max_loc
+			in_game = not in_game
+			if in_game:
+				out = cv2.VideoWriter(str(game_count) + '.avi', -1, FPS, (frame.shape[1],frame.shape[0]))
+			if not in_game:
+				out.release()
+				game_count += 1
 
-	print "Could not find a melee game start in the provided video"
-	assert False
+		if not(i%30) or (not(i%5) and in_game):
+			cv2.imshow('Press \'q\' to stop video', frame)
+			if cv2.waitKey(1) & 0xFF == ord('q'):
+				break
+
+		if in_game:
+			out.write(frame)
+
+		i += 1
+		if 0xFF == ord('q'):
+			break
 
 
-def findNextGame(cap, top_left):
-	while cap.isOpened():
-		ret, frame = cap.read()
-		assert ret
+	## CLEANUP
 
-		cropped_frame = frame[
-			top_left[1]: top_left[1] + GO_TEMPLATE_HEIGHT,
-			top_left[0]: top_left[0] + GO_TEMPLATE_WIDTH
-		];
+	cap.release()
+	out.release()
+	cv2.destroyAllWindows()
 
-		diff = cv2.matchTemplate(cropped_frame, GO_TEMPLATE, eval(DIFF_METHOD))
-
-		if diff > DIFF_THRESHOLD:
-			cap = processGame(cap, top_left)
-			return True, cap
-
-	return False, cap
-
-def processGame(cap, top_left):
-	print cap.get(1)
-	while cap.isOpened():
-		ret, frame = cap.read()
-		assert ret
-
-		cropped_frame = frame[
-			top_left[1]: top_left[1] + GO_TEMPLATE_HEIGHT,
-			top_left[0]: top_left[0] + GO_TEMPLATE_WIDTH
-		];
-
-		diff = cv2.matchTemplate(cropped_frame, GAME_TEMPLATE, eval(DIFF_METHOD))
-
-		if diff > DIFF_THRESHOLD:
-			print cap.get(1)
-			return cap
-
-		cv2.imshow('Press \'q\' to stop video', frame)
-		cv2.waitKey(1)
-	print "Video ended without game end"
-	assert False
+	return 1
 
 
 if __name__ == '__main__':
